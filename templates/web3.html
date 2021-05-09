@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Web auction</title>
+
+    <style>
+      .header {
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        justify-content: center;
+        background-color: aquamarine;
+      }
+      .form {
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+        flex-direction: column;
+        margin-top: 50px;
+      }
+      input {
+        width: 200px;
+      }
+      .products {
+        width: 90%;
+        margin-right: auto;
+        margin-left: auto;
+
+        justify-content: center;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .product {
+        margin: 10px;
+        height: 300px;
+        border-radius: 10px;
+      }
+      .image {
+        height: 250px;
+        width: 200px;
+        background-color: blue;
+        margin: 10px;
+      }
+      button {
+        border: none;
+        box-shadow: 0px 0px 1px 1p rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+      button:hover {
+        cursor: pointer;
+      }
+      .bid {
+        display: flex;
+        flex-direction: row;
+        margin: 20px;
+      }
+
+      .bidslist {
+        background-color: rosybrown;
+        width: 50%;
+
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h2>Welcome to Auction</h2>
+    </div>
+    <button>
+      <a href="/Logout"> Logout</a>
+    </button>
+    <h2>Welcome {{name}}</h2>
+    <div class="products">
+      <div class="product">
+        <img
+          style="object-fit: contain; width: 100%"
+          src="{{product['url']}}"
+          alt=""
+        />
+      </div>
+    </div>
+    <div class="form">
+      <nav>Highest bid placed at {{product['bids'][0]['bid']}}</nav>
+      <meta id="timer" data-time="{{ expire }}" />
+      <h2 id="timer_block"></h2>
+      <meta id="my_playlist_data" data-playlist="{{ id }}" />
+      <form class="form">
+        <div class="" style="text-align: center">Join Here</div>
+        <input type="text" class="bid" placeholder="Place your bid" />
+
+        <br />
+
+        <input type="submit" class="submit" />
+      </form>
+    </div>
+
+    <input type="hidden" class="id_p" />
+    <div class="bidslist">
+      {%for n in product['bids']%}
+      <div class="bid">
+        <p>{{n['name']}}</p>
+        <p style="margin-left: auto">{{n['bid']}}</p>
+      </div>
+      {% endfor%}
+    </div>
+  </body>
+</html>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+  integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+  integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+  crossorigin="anonymous"
+></script>
+<script></script>
+<script type="text/javascript">
+  var socket = io.connect("http://127.0.0.1:5000/");
+
+  socket.on("connect", function () {
+    socket.on("notification", function (msg) {
+      console.log("sj");
+      alert("someonce plced order");
+    });
+    var countDownDate = new Date("MAY 6, 2022 15:37:25").getTime();
+
+    var s = $("#timer").data("time");
+    console.log(s);
+    var id = $("#my_playlist_data").data("playlist");
+    // Update the count down every 1 second
+    var x = setInterval(function () {
+      // Find the distance between now and the count down date
+      s = s - 1;
+
+      d_s = s % 60;
+      if (d_s == 0) {
+        alert("product sold");
+        console.log(socket);
+        socket.emit("product sold", {
+          id: id,
+        });
+
+        window.location.href = "http://127.0.0.1:5000";
+      }
+      m = Math.floor(s / 60);
+      d_m = m % 60;
+
+      h = Math.floor(m / 60);
+      d_h = h % 60;
+
+      if (m > 59) {
+        var h = Math.floor(m / 60);
+      }
+
+      document.getElementById("timer_block").innerHTML =
+        +d_h + ":" + d_m + ":" + d_s;
+
+      // If the count down is over, write some text
+    }, 1000);
+    // var form=$( 'form' ).on( 'submit', function( e ){
+    //     e.preventDefault()
+    //     let username = $( 'input.username' ).val()
+    //     let email=$('input.email').val()
+    //     socket.emit( 'user login',{
+    //       username:username,email:email
+    //     })
+    //     window.location.replace("http://127.0.0.1:5000/web2");
+    //   })})
+
+    var form = $("form").on("submit", function (e) {
+      let bid = $("input.bid").val();
+      let id = $("#my_playlist_data").data("playlist");
+      console.log(id);
+      e.preventDefault();
+      socket.emit("user_bid", {
+        bid_amount: bid,
+        id: id,
+      });
+    });
+
+    socket.on("bid_placed", function (msg) {
+      alert(msg["msg"]);
+      location.reload();
+    });
+  });
+</script>
+
+<script>
+  // Set the date we're counting down to
+</script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+  integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+  integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+  crossorigin="anonymous"
+></script>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Web auction</title>
+
+    <style>
+      .header {
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        background-color: aquamarine;
+      }
+      .form {
+     
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 50px;
+      }
+      input {
+        width: 200px;
+      }
+      #form{
+        display: flex;
+        margin-left: 46%;
+        justify-content: center;
+        margin-left: auto;
+        margin-right: auto
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h2>Welcome to Auction</h2>
+    </div>
+
+    <div class="form" action="" method="POST"></div>
+      <form class="form" id="form">
+        <div class="" style="text-align: center; margin:10px">Join Here</div>
+        <input type="text" class="username" placeholder="Name" />
+
+        <br />
+        <input type="text" class="email" placeholder="Email or Phone" />
+        <br />
+
+        <input type="submit" class="submit" />
+      </form>
+    </div>
+
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+    integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+    crossorigin="anonymous"
+  ></script>
+    <script type="text/javascript">
+var socket = io.connect("http://127.0.0.1:5000/");
+
+socket.on( 'connect', function() {
+
+    // var form=$( 'form' ).on( 'submit', function( e ){
+    //     e.preventDefault()
+    //     let username = $( 'input.username' ).val()
+    //     let email=$('input.email').val()
+    //     socket.emit( 'user login',{
+    //       username:username,email:email
+    //     })
+    //     window.location.replace("http://127.0.0.1:5000/web2");
+    //   })})
+    
+    var form = $("form").on("submit", function (e) {
+      let user_name = $("input.username").val();
+      e.preventDefault();
+      $.ajax({
+        type: "POST",
+        url: "http://127.0.0.1:5000/Login",
+        data: { user: user_name },
+        success: function (res) {
+          alert("account created");
+          window.location.href = "http://127.0.0.1:5000/Home";
+        },
+      });
+    })})
+    </script>
+  </body>
+</html>

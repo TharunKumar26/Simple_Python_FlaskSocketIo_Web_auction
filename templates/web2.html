@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Web auction</title>
+
+    <style>
+      .header {
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        justify-content: center;
+        background-color: aquamarine;
+      }
+      .form {
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+        flex-direction: column;
+        margin-top: 50px;
+      }
+      input {
+        width: 200px;
+      }
+      .products {
+        width: 90%;
+        margin-right: auto;
+        margin-left: auto;
+        background-color: antiquewhite;
+
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .product {
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 6px 5px rgba(0, 0, 0, 0.1);
+      }
+      .image {
+        height: 250px;
+        width: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+      }
+      button {
+        border: none;
+        box-shadow: 0px 0px 1px 1p rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+      button:hover {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h2>Welcome to Auction</h2>
+    </div>
+    <h2>Welcome {{name}}</h2>
+    <button>
+      <a href="/Logout"> Logout</a>
+    </button>
+    <div class="products">
+      {% for n in product %}
+
+      <div class="product">
+        <div class="image">
+          <img
+            style="object-fit: contain; width: 100%"
+            src="{{n['url']}}"
+            alt=""
+          />
+        </div>
+        <h2 style="font-size: 20px">Highest Bid : {{n['bids'][0]['bid']}}</h2>
+        <button style="text-align: center; width: 100%; height: 30px">
+          <a href="/product?id={{n['id']}}">Join Auction</a>
+        </button>
+      </div>
+
+      {% endfor %}
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+      integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/javascript">
+      socket.on("home page", function (msg) {
+        console.log(msg);
+        if (typeof msg.username !== "undefined") {
+          $("h3").remove();
+          $("div.message_holder").append(
+            '<div><b style="color: #f00">' +
+              msg.username +
+              "</b> " +
+              msg.email +
+              "</div>"
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
